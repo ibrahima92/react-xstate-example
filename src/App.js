@@ -1,24 +1,30 @@
 import React from 'react';
-import logo from './logo.svg';
+import { Machine } from 'xstate';
+import { useMachine } from '@xstate/react';
 import './App.css';
 
+
+const changeTheme = Machine({
+  id: 'theme',
+  initial: 'dark',
+  states: {
+    dark: {
+      on: { CHANGE: 'light' }
+    },
+    light: {
+      on: { CHANGE: 'dark' }
+    }
+  }
+})
+
+
 function App() {
+  const [current, send] = useMachine(changeTheme);
+ 
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>{current.matches('dark') ? 'Dark Theme' : 'Light Theme'}</h1>
+      <button onClick={() => send('CHANGE')}>Change Theme</button>
     </div>
   );
 }
